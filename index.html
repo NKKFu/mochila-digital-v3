@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 
 <head>
     <meta charset='utf-8'>
@@ -15,19 +15,21 @@
 <body>
     <div id="page">
         <h2>Mochila digital</h2>
-        <p>Versão de testes, não utilizar em produção</p>
+        <button class="config" onclick="openConfiguration()">Configurar</button>
 
         <h3>Disponíveis em sua escola</h3>
         <div id="homeworks">
+            <p class="nothing">Não encontramos nada :(</p>
             <!-- List of homeworks avaliable on the server -->
-
         </div>
 
         <h3>Disponíveis em sua mochila</h3>
         <div id="my-homeworks">
+            <p class="nothing">Não encontramos nada :(</p>
             <!-- List of homeworks avaliable on the own device -->
 
         </div>
+
     </div>
     <script src='main.js'></script>
 </body>

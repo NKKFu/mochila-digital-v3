@@ -1,7 +1,7 @@
 const page = document.getElementById("page");
 const mainPageHTML = page.innerHTML;
 
-const API_URL = "http://127.0.0.1:5000";
+const API_URL = localStorage.getItem("API_URL") || "http://127.0.0.1:5000";
 
 // Show if has connection to main server
 if (navigator.onLine) {
@@ -19,19 +19,27 @@ function requestMainPageData() {
             const { documents } = data;
 
             const homeworks = document.getElementById("homeworks");
-            homeworks.innerHTML = documents.map((doc, index) => {
-                const [id, name] = doc.split('$%');
-                return `<p index=${id} onclick="openDocument(this)">${name}</p>`
-            }).join('');
+
+            if (documents.length > 0) {
+                homeworks.innerHTML = documents.map((doc, index) => {
+                    const [id, name] = doc.split('$%');
+                    return `<p index=${id} onclick="openDocument(this)">${name}</p>`
+                }).join('');
+            }
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+            homeworks.innerHTML = '<p class="nothing">Não encontramos nada :(</p>';
+            console.error(err)
+        });
 
     // Show all titles from localStorage
     const myLocalHomeworks = document.getElementById("my-homeworks");
-    myLocalHomeworks.innerHTML = getDocumentsFromLocalStorage().map((doc, index) => {
-        const [_, id, title] = doc.eid.split('$%');
-        return `<p index=${id} onclick="openDocument(this)">${title}</p>`
-    }).join('');
+    const inventory = getDocumentsFromLocalStorage()
+    if (inventory.length > 0)
+        myLocalHomeworks.innerHTML = inventory.map((doc, index) => {
+            const [_, id, title] = doc.eid.split('$%');
+            return `<p index=${id} onclick="openDocument(this)">${title}</p>`
+        }).join('');
 }
 
 function getDocumentsFromLocalStorage() {
@@ -88,21 +96,22 @@ function renderDocument(id, title) {
     function render(data, hasAdded) {
         currentOpenedDocument = data;
         page.innerHTML = `
-            <div> ${data} </div>
-            <button onclick="main()">Voltar</button>
-            ${hasAdded ?
-                `<button onclick="removeDocumentBackpack('${id}', '${title}')">Remover da mochila</button>` :
-                `<button onclick="addDocumentBackpack('${id}', '${title}')">
-                    Adicionar para mochila
-                </button>`
-            }`;
+            <div id="text"> ${data} </div>
+            <div class="btn-bottom">
+                <button class="red" onclick="main()">Voltar</button>
+                ${hasAdded ?
+                    `<button class="red" onclick="removeDocumentBackpack('${id}', '${title}')">Remover</button>` :
+                    `<button class="green" onclick="addDocumentBackpack('${id}', '${title}')">Adicionar</button>`
+                }
+            </div>
+            `;
     }
 
     const localDocument = localStorage.getItem(`document$%${id}$%${title}`);
 
     if (!localDocument) {
         // Pegar da web
-        const request = new Request(`http://127.0.0.1:5000/documents/${id}`, { method: 'GET' });
+        const request = new Request(`${API_URL}/documents/${id}`, { method: 'GET' });
         fetch(request)
             .then(response => response.text())
             .then(data => {
@@ -112,6 +121,22 @@ function renderDocument(id, title) {
     } else {
         render(localDocument, true);
     }
+}
+
+function openConfiguration() {
+    page.innerHTML = `
+            <label for="server-url">Endereço do Servidor</label>
+            <input type="text" id="server-url">
+            <div class="btn-bottom">
+                <button class="green" onclick="updateConfig()">Atualizar dados</button>
+                <button class="red" onclick="main()">Voltar</button>
+            </div>`;
+    document.getElementById('server-url').value = localStorage.getItem("API_URL") || "http://127.0.0.1:5000";
+}
+
+function updateConfig() {
+    localStorage.setItem("API_URL", document.getElementById('server-url').value);
+    location.reload();
 }
 
 function main() {
