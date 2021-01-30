@@ -1,7 +1,12 @@
 {
     "name": "Mochila Digital",
     "short_name": "Mochila Digital",
-    "icons": [],
+    "icons": [{
+        "src": "assets/mochila.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+    }],
     "start_url": "./index.html",
     "display": "fullscreen",
     "background_color": "#3E4EB8",
