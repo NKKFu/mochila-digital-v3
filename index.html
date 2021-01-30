@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <title>Mochila Digitla</title>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='style.css'>
+</head>
+
+<body>
+    <div id="page">
+        <h2>Mochila digital</h2>
+        <p>Versão de testes, não utilizar em produção</p>
+
+        <h3>Disponíveis em sua escola</h3>
+        <div id="homeworks">
+            <!-- List of homeworks avaliable on the server -->
+
+        </div>
+
+        <h3>Disponíveis em sua mochila</h3>
+        <div id="my-homeworks">
+            <!-- List of homeworks avaliable on the own device -->
+
+        </div>
+    </div>
+    <script src='main.js'></script>
+</body>
+
+<!-- Ignore that script -> PWA Service Worker register & manager -->
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function() {
+                console.log('service worker registered');
+            })
+            .catch(function() {
+                console.warn('service worker failed');
+            });
+    }
+</script>
+
+</html>
